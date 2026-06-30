@@ -1,0 +1,366 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+:root {
+  --bg: #05050a;
+  --panel: #10101a;
+  --panel-soft: #171724;
+  --purple: #9b5cff;
+  --purple-light: #c487ff;
+  --cyan: #7df9ff;
+  --text: #f6f2ff;
+  --muted: #9fa0b8;
+  --border: #2b2b42;
+  --danger: #ff5b7f;
+  --success: #84ffb5;
+}
+
+body {
+  min-height: 100vh;
+  overflow: hidden;
+  background:
+    radial-gradient(circle at top, rgba(155, 92, 255, 0.2), transparent 35%),
+    linear-gradient(180deg, #090911, #020204);
+  color: var(--text);
+  font-family: "Inter", sans-serif;
+}
+
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  background: repeating-linear-gradient(
+    to bottom,
+    rgba(255,255,255,0.035),
+    rgba(255,255,255,0.035) 1px,
+    transparent 1px,
+    transparent 5px
+  );
+  opacity: 0.35;
+}
+
+#app {
+  width: 100%;
+  max-width: 430px;
+  min-height: 100vh;
+  margin: 0 auto;
+  padding: 18px;
+  position: relative;
+}
+
+.screen {
+  min-height: 100vh;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  animation: fadeIn 0.5s ease;
+}
+
+.hidden {
+  display: none;
+}
+
+.logo {
+  font-family: "Orbitron", sans-serif;
+  text-align: center;
+  font-size: 38px;
+  font-weight: 800;
+  letter-spacing: 3px;
+  text-shadow: 0 0 18px rgba(155, 92, 255, 0.75);
+}
+
+.logo span {
+  display: block;
+  margin-top: 8px;
+  font-size: 12px;
+  letter-spacing: 6px;
+  color: var(--purple-light);
+}
+
+.build {
+  margin-top: 16px;
+  text-align: center;
+  font-family: "Orbitron", sans-serif;
+  font-size: 12px;
+  letter-spacing: 4px;
+  color: var(--muted);
+}
+
+.terminal {
+  margin-top: 42px;
+}
+
+.terminal-line {
+  margin-bottom: 12px;
+  color: #d8d6ec;
+  font-size: 14px;
+  animation: appear 0.35s ease forwards;
+}
+
+.progress,
+.mini-bar {
+  width: 100%;
+  height: 10px;
+  background: #222234;
+  border: 1px solid #34344c;
+  border-radius: 40px;
+  overflow: hidden;
+}
+
+#progress-bar,
+#hp-bar,
+#xp-bar {
+  height: 100%;
+  width: 0%;
+  background: linear-gradient(90deg, var(--purple), var(--purple-light));
+  box-shadow: 0 0 16px rgba(155,92,255,0.8);
+  transition: width 0.6s ease;
+}
+
+.hud {
+  width: 100%;
+  padding: 14px;
+  margin-bottom: 14px;
+  background: rgba(16,16,26,0.92);
+  border: 1px solid var(--border);
+  border-radius: 18px;
+  box-shadow: 0 0 25px rgba(155,92,255,0.08);
+}
+
+.hud-row {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 14px;
+}
+
+.hud-label {
+  display: block;
+  font-family: "Orbitron", sans-serif;
+  font-size: 10px;
+  color: var(--muted);
+  letter-spacing: 2px;
+  margin-bottom: 4px;
+}
+
+.hud strong {
+  font-family: "Orbitron", sans-serif;
+  color: white;
+}
+
+.stat {
+  display: grid;
+  grid-template-columns: 34px 1fr;
+  align-items: center;
+  gap: 10px;
+  margin-top: 8px;
+  font-family: "Orbitron", sans-serif;
+  font-size: 11px;
+  letter-spacing: 1px;
+}
+
+.panel,
+.drawer {
+  width: 100%;
+  background: rgba(17,17,27,0.96);
+  border: 1px solid var(--border);
+  border-radius: 22px;
+  padding: 24px;
+  box-shadow:
+    0 0 35px rgba(0,0,0,0.45),
+    0 0 28px rgba(155,92,255,0.08);
+  position: relative;
+  overflow: hidden;
+}
+
+.panel::before,
+.drawer::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: linear-gradient(180deg, rgba(255,255,255,0.035), transparent 30%);
+}
+
+.panel-title,
+.drawer-title {
+  font-family: "Orbitron", sans-serif;
+  text-align: center;
+  font-size: 22px;
+  letter-spacing: 2px;
+  text-shadow: 0 0 14px rgba(155,92,255,0.65);
+}
+
+.divider {
+  width: 90px;
+  height: 3px;
+  margin: 18px auto 26px;
+  background: linear-gradient(90deg, transparent, var(--purple), transparent);
+  border-radius: 20px;
+}
+
+h1,
+h2 {
+  font-family: "Orbitron", sans-serif;
+  text-align: center;
+  margin-bottom: 18px;
+}
+
+h1 {
+  font-size: 30px;
+}
+
+h2 {
+  color: var(--purple-light);
+  font-size: 20px;
+}
+
+.quest-text {
+  color: #dadbef;
+  line-height: 1.75;
+  text-align: center;
+  margin-bottom: 14px;
+  font-size: 15px;
+}
+
+button {
+  width: 100%;
+  margin-top: 24px;
+  padding: 15px;
+  border: 1px solid rgba(196,135,255,0.45);
+  border-radius: 14px;
+  background: linear-gradient(90deg, #6f3cff, #a96cff);
+  color: white;
+  font-family: "Orbitron", sans-serif;
+  font-size: 13px;
+  letter-spacing: 2px;
+  cursor: pointer;
+  box-shadow: 0 0 18px rgba(155,92,255,0.28);
+}
+
+button:active {
+  transform: scale(0.98);
+}
+
+.bottom-menu {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  margin-top: 14px;
+}
+
+.bottom-menu button {
+  margin-top: 0;
+  font-size: 11px;
+  padding: 13px;
+  background: rgba(155,92,255,0.14);
+}
+
+input {
+  width: 100%;
+  padding: 16px;
+  margin-top: 18px;
+  border-radius: 14px;
+  border: 1px solid var(--border);
+  background: #0d0d16;
+  color: white;
+  text-align: center;
+  font-size: 17px;
+  font-family: "Orbitron", sans-serif;
+  letter-spacing: 2px;
+  outline: none;
+}
+
+input:focus {
+  border-color: var(--purple);
+  box-shadow: 0 0 18px rgba(155,92,255,0.45);
+}
+
+#error-message {
+  min-height: 22px;
+  margin-top: 16px;
+  text-align: center;
+  color: var(--danger);
+  font-size: 13px;
+}
+
+.drawer {
+  margin-top: 14px;
+}
+
+#inventory-count {
+  margin: 14px 0;
+  text-align: center;
+  font-family: "Orbitron", sans-serif;
+  color: var(--purple-light);
+  font-size: 12px;
+  letter-spacing: 2px;
+}
+
+ul {
+  list-style: none;
+}
+
+li {
+  padding: 10px 0;
+  border-bottom: 1px solid rgba(255,255,255,0.08);
+  color: #dcdaf0;
+  font-size: 14px;
+}
+
+li::before {
+  content: "▶ ";
+  color: var(--purple-light);
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(14px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes appear {
+  from {
+    opacity: 0;
+    transform: translateX(-8px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@media (max-width: 480px) {
+  #app {
+    padding: 14px;
+  }
+
+  .logo {
+    font-size: 32px;
+  }
+
+  .panel,
+  .drawer {
+    padding: 20px;
+  }
+
+  .panel-title,
+  .drawer-title {
+    font-size: 19px;
+  }
+
+  .quest-text {
+    font-size: 14px;
+  }
+}
