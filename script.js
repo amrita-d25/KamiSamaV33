@@ -11,11 +11,18 @@ const xpBar = document.getElementById("xp-bar");
 
 const inventoryBtn = document.getElementById("inventory-btn");
 const questLogBtn = document.getElementById("quest-log-btn");
+const resetBtn = document.getElementById("reset-btn");
+
 const inventoryPanel = document.getElementById("inventory-panel");
 const questLogPanel = document.getElementById("quest-log-panel");
 const inventoryList = document.getElementById("inventory-list");
 const inventoryCount = document.getElementById("inventory-count");
 const questLogList = document.getElementById("quest-log-list");
+
+const popup = document.getElementById("popup");
+const popupTitle = document.getElementById("popup-title");
+const popupBody = document.getElementById("popup-body");
+const popupClose = document.getElementById("popup-close");
 
 let inventory = [];
 let questLog = [];
@@ -27,6 +34,7 @@ const bootMessages = [
   "Loading Inventory...",
   "Checking HP...",
   "Calibrating Sub-Bass...",
+  "Loading Memory Archive...",
   "Searching for Active Player...",
   "PLAYER FOUND",
   "KamiSama",
@@ -52,7 +60,7 @@ function bootSequence() {
 
     progressBar.style.width = `${((i + 1) / bootMessages.length) * 100}%`;
     i++;
-  }, 600);
+  }, 560);
 }
 
 function showGame() {
@@ -70,25 +78,30 @@ function showGame() {
 function setScreen(title, content) {
   screenTitle.textContent = title;
   screenContent.innerHTML = content;
+  inventoryPanel.classList.add("hidden");
+  questLogPanel.classList.add("hidden");
 }
 
 function showQuestGiver() {
+  questLog = ["Side Quest Accepted"];
+  updateQuestLog();
+
   setScreen("SIDE QUEST ACCEPTED", `
     <p class="quest-text">Every great adventure begins with someone willing to believe in impossible things.</p>
     <p class="quest-text">Your Quest Giver is nearby.</p>
     <p class="quest-text">Find the one who always says...</p>
     <h2>"One more side quest."</h2>
-    <button onclick="showLantern()">PRESS START</button>
+    <button onclick="showExplorerKit()">PRESS START</button>
   `);
-
-  questLog = ["Side Quest Accepted"];
-  updateQuestLog();
 }
 
-function showLantern() {
-  setScreen("QUEST ITEM ACQUIRED", `
-    <h2>Explorer's Lantern</h2>
-    <p class="quest-text">The Quest Giver has entrusted you with your first artifact.</p>
+function showExplorerKit() {
+  setScreen("EXPLORER KIT", `
+    <h2>ITEMS ACQUIRED</h2>
+    <p class="quest-text">🔦 Explorer's Lantern</p>
+    <p class="quest-text">📹 Memory Archive Device</p>
+    <p class="quest-text">Use the camera only if a moment feels worth remembering.</p>
+    <p class="quest-text">No quest depends on this item.</p>
     <div class="code-box">
       FIRST ACCESS CODE
       <span>CREATOR</span>
@@ -136,6 +149,9 @@ function verifyPassword() {
 }
 
 function showCreatorQuest() {
+  questLog = ["The Creator - Active"];
+  updateQuestLog();
+
   setScreen("QUEST_01", `
     <h1>THE CREATOR</h1>
     <p class="quest-text">Before there was a Wolf God...</p>
@@ -143,9 +159,6 @@ function showCreatorQuest() {
     <p class="quest-text">Return to where KamiSama comes to life.</p>
     <button onclick="beginSearch()">BEGIN SEARCH</button>
   `);
-
-  questLog = ["The Creator - Active"];
-  updateQuestLog();
 }
 
 function beginSearch() {
@@ -175,9 +188,14 @@ function completeCreatorQuest() {
     questLog = ["The Creator - Complete"];
     updateQuestLog();
 
+    showPopup(
+      "ITEM ACQUIRED",
+      "KamiSama Patch<br><br>Classification: Quest Item<br><br>Added to Inventory."
+    );
+
     setScreen("ADVENTURE LOG UPDATED", `
-      <h2>ITEM ACQUIRED</h2>
-      <p class="quest-text">KamiSama Patch has been added to your inventory.</p>
+      <h2>QUEST COMPLETE</h2>
+      <p class="quest-text">The Creator has been completed.</p>
       <p class="quest-text">To secure the next code, search beside the ghost who never leaves your side.</p>
     `);
   }, 1000);
@@ -187,13 +205,11 @@ function addItem(item) {
   if (!inventory.includes(item)) {
     inventory.push(item);
   }
-
   updateInventory();
 }
 
 function updateInventory() {
   inventoryCount.textContent = `${inventory.length} / 6 ITEMS`;
-
   inventoryList.innerHTML = "";
 
   if (inventory.length === 0) {
@@ -227,6 +243,16 @@ function updateQuestLog() {
   });
 }
 
+function showPopup(title, body) {
+  popupTitle.textContent = title;
+  popupBody.innerHTML = body;
+  popup.classList.remove("hidden");
+}
+
+popupClose.addEventListener("click", () => {
+  popup.classList.add("hidden");
+});
+
 inventoryBtn.addEventListener("click", () => {
   inventoryPanel.classList.toggle("hidden");
   questLogPanel.classList.add("hidden");
@@ -235,4 +261,16 @@ inventoryBtn.addEventListener("click", () => {
 questLogBtn.addEventListener("click", () => {
   questLogPanel.classList.toggle("hidden");
   inventoryPanel.classList.add("hidden");
+});
+
+resetBtn.addEventListener("click", () => {
+  inventory = [];
+  questLog = [];
+  xp = 0;
+  hp = 70;
+  hpBar.style.width = `${hp}%`;
+  xpBar.style.width = `${xp}%`;
+  updateInventory();
+  updateQuestLog();
+  showQuestGiver();
 });

@@ -4,12 +4,12 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-  <title>KamiSama OS</title>
+  <title>KamiSama OS Build 3</title>
 
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 
-  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;500;700;800&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600;700;800&family=Silkscreen:wght@400;700&display=swap" rel="stylesheet" />
 
   <link rel="stylesheet" href="style.css" />
 </head>
@@ -17,37 +17,31 @@
 <body>
   <div id="app">
 
-    <!-- BOOT SCREEN -->
-    <section id="boot-screen" class="screen">
-      <div class="logo">
-        KAMISAMA
-        <span>OPERATING SYSTEM</span>
-      </div>
+    <section id="boot-screen" class="screen active">
+      <div class="boot-box">
+        <div class="logo">KAMISAMA<span>OPERATING SYSTEM</span></div>
+        <div class="build">BUILD_03 // LEVEL_33</div>
 
-      <div class="build">BUILD_33</div>
+        <div class="terminal">
+          <div id="terminal-output">
+            <div class="terminal-line">Initializing...</div>
+          </div>
 
-      <div class="terminal">
-        <div id="terminal-output">
-          <div class="terminal-line">Initializing...</div>
-        </div>
-
-        <div class="progress">
-          <div id="progress-bar"></div>
+          <div class="progress">
+            <div id="progress-bar"></div>
+          </div>
         </div>
       </div>
     </section>
 
-    <!-- MAIN GAME SCREEN -->
     <section id="game-screen" class="screen hidden">
 
-      <!-- HUD -->
       <header class="hud">
-        <div class="hud-row">
+        <div class="hud-top">
           <div>
             <span class="hud-label">PLAYER</span>
             <strong>KamiSama</strong>
           </div>
-
           <div>
             <span class="hud-label">LV</span>
             <strong>33</strong>
@@ -56,52 +50,47 @@
 
         <div class="stat">
           <span>HP</span>
-          <div class="mini-bar">
-            <div id="hp-bar"></div>
-          </div>
+          <div class="mini-bar"><div id="hp-bar"></div></div>
         </div>
 
         <div class="stat">
           <span>XP</span>
-          <div class="mini-bar">
-            <div id="xp-bar"></div>
-          </div>
+          <div class="mini-bar"><div id="xp-bar"></div></div>
         </div>
       </header>
 
-      <!-- MAIN PANEL -->
       <main class="panel" id="main-panel">
-        <div class="panel-title" id="screen-title">
-          SIDE QUEST ACCEPTED
-        </div>
-
+        <div class="panel-title" id="screen-title">SIDE QUEST ACCEPTED</div>
         <div class="divider"></div>
-
-        <div id="screen-content">
-          <!-- JavaScript controls this area -->
-        </div>
+        <div id="screen-content"></div>
       </main>
 
-      <!-- INVENTORY -->
       <section class="drawer hidden" id="inventory-panel">
         <div class="drawer-title">INVENTORY</div>
         <div id="inventory-count">0 / 6 ITEMS</div>
         <ul id="inventory-list"></ul>
       </section>
 
-      <!-- QUEST LOG -->
       <section class="drawer hidden" id="quest-log-panel">
         <div class="drawer-title">QUEST LOG</div>
         <ul id="quest-log-list"></ul>
       </section>
 
-      <!-- BOTTOM MENU -->
       <nav class="bottom-menu">
         <button id="inventory-btn">INVENTORY</button>
         <button id="quest-log-btn">QUEST LOG</button>
+        <button id="reset-btn">RESET</button>
       </nav>
 
     </section>
+
+    <div id="popup" class="popup hidden">
+      <div class="popup-card">
+        <div class="popup-title" id="popup-title">ITEM ACQUIRED</div>
+        <div class="popup-body" id="popup-body"></div>
+        <button id="popup-close">CONTINUE</button>
+      </div>
+    </div>
 
   </div>
 
