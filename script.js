@@ -1,276 +1,43 @@
-const bootScreen = document.getElementById("boot-screen");
-const gameScreen = document.getElementById("game-screen");
-const terminal = document.getElementById("terminal-output");
-const progressBar = document.getElementById("progress-bar");
+const $=id=>document.getElementById(id);let inv=[],loot=[],done=[],qi=0,xp=0,hp=70,ach=[];
+function playSound(id) {
 
-const screenTitle = document.getElementById("screen-title");
-const screenContent = document.getElementById("screen-content");
+    const sound = document.getElementById(id);
 
-const hpBar = document.getElementById("hp-bar");
-const xpBar = document.getElementById("xp-bar");
+    if (!sound) return;
 
-const inventoryBtn = document.getElementById("inventory-btn");
-const questLogBtn = document.getElementById("quest-log-btn");
-const resetBtn = document.getElementById("reset-btn");
+    sound.currentTime = 0;
 
-const inventoryPanel = document.getElementById("inventory-panel");
-const questLogPanel = document.getElementById("quest-log-panel");
-const inventoryList = document.getElementById("inventory-list");
-const inventoryCount = document.getElementById("inventory-count");
-const questLogList = document.getElementById("quest-log-list");
+    sound.play().catch(() => {});
 
-const popup = document.getElementById("popup");
-const popupTitle = document.getElementById("popup-title");
-const popupBody = document.getElementById("popup-body");
-const popupClose = document.getElementById("popup-close");
-
-let inventory = [];
-let questLog = [];
-let xp = 0;
-let hp = 70;
-
-const bootMessages = [
-  "Loading Adventure Log...",
-  "Loading Inventory...",
-  "Checking HP...",
-  "Calibrating Sub-Bass...",
-  "Loading Memory Archive...",
-  "Searching for Active Player...",
-  "PLAYER FOUND",
-  "KamiSama",
-  "LEVEL 33"
-];
-
-bootSequence();
-
-function bootSequence() {
-  let i = 0;
-
-  const timer = setInterval(() => {
-    if (i >= bootMessages.length) {
-      clearInterval(timer);
-      setTimeout(showGame, 900);
-      return;
-    }
-
-    const line = document.createElement("div");
-    line.className = "terminal-line";
-    line.textContent = bootMessages[i];
-    terminal.appendChild(line);
-
-    progressBar.style.width = `${((i + 1) / bootMessages.length) * 100}%`;
-    i++;
-  }, 560);
 }
-
-function showGame() {
-  bootScreen.classList.add("hidden");
-  gameScreen.classList.remove("hidden");
-
-  hpBar.style.width = `${hp}%`;
-  xpBar.style.width = `${xp}%`;
-
-  showQuestGiver();
-  updateInventory();
-  updateQuestLog();
-}
-
-function setScreen(title, content) {
-  screenTitle.textContent = title;
-  screenContent.innerHTML = content;
-  inventoryPanel.classList.add("hidden");
-  questLogPanel.classList.add("hidden");
-}
-
-function showQuestGiver() {
-  questLog = ["Side Quest Accepted"];
-  updateQuestLog();
-
-  setScreen("SIDE QUEST ACCEPTED", `
-    <p class="quest-text">Every great adventure begins with someone willing to believe in impossible things.</p>
-    <p class="quest-text">Your Quest Giver is nearby.</p>
-    <p class="quest-text">Find the one who always says...</p>
-    <h2>"One more side quest."</h2>
-    <button onclick="showExplorerKit()">PRESS START</button>
-  `);
-}
-
-function showExplorerKit() {
-  setScreen("EXPLORER KIT", `
-    <h2>ITEMS ACQUIRED</h2>
-    <p class="quest-text">🔦 Explorer's Lantern</p>
-    <p class="quest-text">📹 Memory Archive Device</p>
-    <p class="quest-text">Use the camera only if a moment feels worth remembering.</p>
-    <p class="quest-text">No quest depends on this item.</p>
-    <div class="code-box">
-      FIRST ACCESS CODE
-      <span>CREATOR</span>
-    </div>
-    <button onclick="showPassword()">CONTINUE</button>
-  `);
-}
-
-function showPassword() {
-  setScreen("ACCESS TERMINAL", `
-    <input id="password" autocomplete="off" spellcheck="false" placeholder="ENTER ACCESS CODE">
-    <button onclick="verifyPassword()">VERIFY</button>
-    <div id="error-message"></div>
-  `);
-
-  setTimeout(() => {
-    const input = document.getElementById("password");
-    input.focus();
-
-    input.addEventListener("keypress", (e) => {
-      if (e.key === "Enter") verifyPassword();
-    });
-  }, 100);
-}
-
-function verifyPassword() {
-  const input = document.getElementById("password");
-  const error = document.getElementById("error-message");
-  const code = input.value.trim().toUpperCase();
-
-  if (code === "CREATOR") {
-    setScreen("ACCESS VERIFIED", `
-      <p class="quest-text">Decrypting Quest Data...</p>
-      <div class="progress">
-        <div style="width:100%;height:100%;background:linear-gradient(90deg,#9b5cff,#c487ff);"></div>
-      </div>
-    `);
-
-    setTimeout(showCreatorQuest, 1000);
-  } else {
-    error.textContent = "ACCESS DENIED";
-    input.value = "";
-    input.focus();
-  }
-}
-
-function showCreatorQuest() {
-  questLog = ["The Creator - Active"];
-  updateQuestLog();
-
-  setScreen("QUEST_01", `
-    <h1>THE CREATOR</h1>
-    <p class="quest-text">Before there was a Wolf God...</p>
-    <p class="quest-text">there was an idea.</p>
-    <p class="quest-text">Return to where KamiSama comes to life.</p>
-    <button onclick="beginSearch()">BEGIN SEARCH</button>
-  `);
-}
-
-function beginSearch() {
-  setScreen("MISSION ACTIVE", `
-    <h2>THE CREATOR</h2>
-    <p class="quest-text">Current Objective:</p>
-    <p class="quest-text">Recover the artifact where KamiSama comes to life.</p>
-    <button onclick="completeCreatorQuest()">ARTIFACT RECOVERED</button>
-  `);
-}
-
-function completeCreatorQuest() {
-  setScreen("SCANNING ARTIFACT", `
-    <p class="quest-text">Verifying recovered item...</p>
-    <div class="progress">
-      <div style="width:100%;height:100%;background:linear-gradient(90deg,#9b5cff,#c487ff);"></div>
-    </div>
-  `);
-
-  setTimeout(() => {
-    addItem("KamiSama Patch");
-    xp = 18;
-    hp = 78;
-    hpBar.style.width = `${hp}%`;
-    xpBar.style.width = `${xp}%`;
-
-    questLog = ["The Creator - Complete"];
-    updateQuestLog();
-
-    showPopup(
-      "ITEM ACQUIRED",
-      "KamiSama Patch<br><br>Classification: Quest Item<br><br>Added to Inventory."
-    );
-
-    setScreen("ADVENTURE LOG UPDATED", `
-      <h2>QUEST COMPLETE</h2>
-      <p class="quest-text">The Creator has been completed.</p>
-      <p class="quest-text">To secure the next code, search beside the ghost who never leaves your side.</p>
-    `);
-  }, 1000);
-}
-
-function addItem(item) {
-  if (!inventory.includes(item)) {
-    inventory.push(item);
-  }
-  updateInventory();
-}
-
-function updateInventory() {
-  inventoryCount.textContent = `${inventory.length} / 6 ITEMS`;
-  inventoryList.innerHTML = "";
-
-  if (inventory.length === 0) {
-    const empty = document.createElement("li");
-    empty.textContent = "No items collected yet.";
-    inventoryList.appendChild(empty);
-    return;
-  }
-
-  inventory.forEach(item => {
-    const li = document.createElement("li");
-    li.textContent = item;
-    inventoryList.appendChild(li);
-  });
-}
-
-function updateQuestLog() {
-  questLogList.innerHTML = "";
-
-  if (questLog.length === 0) {
-    const empty = document.createElement("li");
-    empty.textContent = "No active quests.";
-    questLogList.appendChild(empty);
-    return;
-  }
-
-  questLog.forEach(q => {
-    const li = document.createElement("li");
-    li.textContent = q;
-    questLogList.appendChild(li);
-  });
-}
-
-function showPopup(title, body) {
-  popupTitle.textContent = title;
-  popupBody.innerHTML = body;
-  popup.classList.remove("hidden");
-}
-
-popupClose.addEventListener("click", () => {
-  popup.classList.add("hidden");
-});
-
-inventoryBtn.addEventListener("click", () => {
-  inventoryPanel.classList.toggle("hidden");
-  questLogPanel.classList.add("hidden");
-});
-
-questLogBtn.addEventListener("click", () => {
-  questLogPanel.classList.toggle("hidden");
-  inventoryPanel.classList.add("hidden");
-});
-
-resetBtn.addEventListener("click", () => {
-  inventory = [];
-  questLog = [];
-  xp = 0;
-  hp = 70;
-  hpBar.style.width = `${hp}%`;
-  xpBar.style.width = `${xp}%`;
-  updateInventory();
-  updateQuestLog();
-  showQuestGiver();
-});
+const q=[["CREATOR","THE CREATOR","KamiSama Patch","First Artifact",["Before there was a Wolf God...","there was an idea.","Return to where KamiSama comes to life."],"Recover the artifact where KamiSama comes to life.","To secure the next code, search beside the ghost who never leaves your side.","candy"],["COLLECTOR","THE COLLECTOR","Guardian's Cache","Collector",["Every collector knows...","the greatest treasures are never left unprotected.","Seek the place where your valuables sleep."],"Recover the relic guarded near the treasure vault.","SYSTEM ALERT<br><br>An explosive object has been detected.<br><br>Threat Level: Minimal<br>Fragrance Level: Exceptional<br><br>Retrieve the secured access code.",""],["ADVENTURER","THE ADVENTURER","Gengar Utility Pack","Ready for Travel",["No adventurer travels far without the right companion.","Find the bag that's ready for its next journey."],"Recover the travel companion waiting for its next side quest.","The next code has attached itself to something that keeps you hydrated for long adventures.","monster"],["MAKER","THE MAKER","Crochet Recovery Kit","Shared Hobby",["Every great adventure teaches a new skill.","This one we've learned together.","SYSTEM ADVICE:","Try pulling from the butt first."],"Unravel the next reward where our newest hobby lives.","Cooling systems often hide important information.<br><br>Check the controller of your climate.",""],["WOLFGOD","THE WOLF GOD","Wolf God's Garment","Wolf God",["Even Wolf Gods need armor.","Yours has been waiting patiently."],"Recover the armor waiting in storage.","Every great adventure changes the adventurer.<br><br>The final code waits where you'll find your own reflection.","wub"],["FULLRESTORE","FULL RESTORE","Full Restore","Fully Restored",["Adam...","Every adventure eventually comes to an end.","Every hero deserves a moment to rest.","Return to where you'll be wrapped in comfort.","Your Full Restore awaits."],"Recover the final reward where comfort waits.","Adventure Complete.",""]];
+const L={candy:["CANDY / SNACKS","COMMON","Music Corner","A minor energy signature has been detected.","Every adventurer needs provisions for the road.","Snack Recovery Specialist"],monster:["MANA SURGE","RARE","Motorcycle Equipment","An unusually strong energy signature has been detected.","+50 Energy<br>+25 Focus<br>+100 Bass","Mana Surge"],wub:["I WUB WUB WUB","UNCOMMON","Window","Extreme sub-bass frequencies detected nearby.","Passive Ability:<br>May attract fellow dubstep enthusiasts.","Bass Enjoyer"]};
+let boot=["Loading Adventure Log...","Loading Inventory...","Checking HP...","Calibrating Sub-Bass...","Loading Memory Archive...","Searching for Snork Mimimimi Land...","Boat delayed.","Searching for Active Player...","PLAYER FOUND","KamiSama","LEVEL 33"],i=0,t=setInterval(()=>{if(i>=boot.length){clearInterval(t);setTimeout(start,700);return}let p=document.createElement("p");p.textContent=boot[i];$("terminal").appendChild(p);$("bootbar").style.width=((i+1)/boot.length*100)+"%";i++},420);
+function start(){playSound("bootSound");$("boot").classList.add("hidden");;$("game").classList.remove("hidden");bars();intro();upd();award("One More Side Quest")}
+function bars(){$("hp").style.width=hp+"%";$("xp").style.width=xp+"%"}
+function page(title,html){$("title").textContent=title;$("content").innerHTML=html;$("inv").classList.add("hidden");$("log").classList.add("hidden")}
+function P(a){return a.map(x=>`<p class="quest">${x}</p>`).join("")}
+function intro(){page("SIDE QUEST ACCEPTED",`<p class="quest">Every great adventure begins with a trusted companion.</p><p class="quest">Your Quest Giver is nearby.</p><p class="quest">Find the one who is always ready to join you for one more side quest.</p><button onclick="kit()">PRESS START</button>`)}
+function kit(){page("EXPLORER KIT",`<h2>ITEMS ACQUIRED</h2><p class="quest">🔦 Explorer's Lantern</p><p class="quest">📹 Memory Archive Device</p><p class="quest">Use the camera only if a moment feels worth remembering.</p><p class="quest">No quest depends on this item.</p><div class="code">FIRST ACCESS CODE<span>CREATOR</span></div><button onclick="pass()">CONTINUE</button>`)}
+function pass(){page("ACCESS TERMINAL",`<input id="pw" placeholder="ENTER ACCESS CODE"><button onclick="verify()">VERIFY</button><div id="err"></div>`);setTimeout(()=>$("pw").focus(),50)}
+function verify(){let v=$("pw").value.trim().toUpperCase(),cur=q[qi];if(v===cur[0]){playSound("successSound");toast("ACCESS CODE VERIFIED");page("ACCESS VERIFIED",`<p class="quest">Decrypting Quest Data...</p><div class="scan"><span></span><span></span><span></span></div>`);setTimeout(quest,700)}else{playSound("errorSound");$("err").textContent="ACCESS DENIED";$("pw").value=""}}
+function quest(){let cur=q[qi];page(`QUEST_0${qi+1}`,`<h1>${cur[1]}</h1>${P(cur[4])}<button onclick="active()">BEGIN SEARCH</button>`);upd()}
+function active(){let cur=q[qi];page("MISSION ACTIVE",`<h2>${cur[1]}</h2><p class="quest">Current Objective:</p><p class="quest">${cur[5]}</p><button onclick="complete()">ARTIFACT RECOVERED</button>`)}
+function complete(){let cur=q[qi];playSound("scannerSound");page("SCANNING ARTIFACT",`<p class="quest">Scanner online.</p><p class="quest">Verifying recovered item...</p><div class="scan"><span></span><span></span><span></span></div><p class="quest">Please remain dramatically still.</p>`);setTimeout(()=>{add(cur[2]);done.push(cur[1]);xp=Math.min(100,xp+16);hp=Math.min(100,hp+5);bars();toast("+16 XP // Inventory Updated");award(cur[3]);playSound("itemSound");pop("ITEM ACQUIRED",`${cur[2]}<br><br>Classification: Quest Item<br><br>Added to Inventory.`);let lk=cur[7],final=qi===q.length-1;qi++;upd();if(final){hp=100;xp=100;bars();$("hpLabel").textContent="RESTORED";setTimeout(summary,700)}else if(lk) lootAlert(lk,cur[6]);else next(cur)},900)}
+function next(cur){page("ADVENTURE LOG UPDATED",`<h2>QUEST COMPLETE</h2><p class="quest">${cur[1]} has been completed.</p><p class="quest">${cur[6]}</p><button onclick="pass()">ENTER NEXT CODE</button>`)}
+function lootAlert(k,nc){let l=L[k];page("SYSTEM INTERRUPTION",`<p class="quest">${l[3]}</p><p class="quest">Analyzing signal...</p><div class="scan"><span></span><span></span><span></span></div><p class="quest">Reward Classification:</p><h2>${l[1]}</h2><p class="quest">Approximate Area:</p><h2>${l[2]}</h2><button onclick="track('${k}',\`${nc}\`)">TRACK SIGNAL</button><button class="secondary" onclick="skip(\`${nc}\`)">IGNORE SIGNAL</button>`)}
+function track(k,nc){let l=L[k];playSound("scannerSound");page("SCANNING AREA",`<p class="quest">Signal lock in progress...</p><div class="scan"><span></span><span></span><span></span></div><p class="quest">Confidence: 99%</p><p class="quest">Could still be a sock.</p><p class="quest">Search Approximate Area:</p><h2>${l[2]}</h2><button onclick="collect('${k}',\`${nc}\`)">LOOT RECOVERED</button>`)}
+function collect(k,nc){document.getElementById("scannerSound").pause();
+document.getElementById("scannerSound").currentTime = 0;let l=L[k];if(!loot.includes(l[0]))loot.push(l[0]);xp=Math.min(100,xp+7);bars();upd();toast("+7 XP // Loot Logged");award(l[5]);playSound("itemSound");pop("LOOT ACQUIRED",`${l[0]}<br><br>Rarity: ${l[1]}<br><br>${l[4]}`);skip(nc)}
+function skip(nc){page("ADVENTURE LOG UPDATED",`<h2>NEXT ACCESS CODE</h2><p class="quest">${nc}</p><button onclick="pass()">ENTER NEXT CODE</button>`)}
+function summary(){playSound("restoreSound");award("Adventure Complete");page("ADVENTURE SUMMARY",`<p class="quest">Quests Completed: 6 / 6</p><p class="quest">Artifacts Recovered: ${inv.length} / 6</p><p class="quest">Loot Found: ${loot.length} / 3</p><p class="quest">HP: 100%</p><p class="quest">XP: 100%</p><button onclick="memory()">CONTINUE</button>`)}
+function memory(){playSound("cameraSound");page("MEMORY ARCHIVE",`<p class="quest">Would you like to save this adventure?</p><p class="quest">If you'd like, take one final video.</p><p class="quest">Not because the game asked you to...</p><p class="quest">but because one day it might be nice to remember today.</p><button onclick="err()">MEMORY ARCHIVE ENABLED</button><button class="secondary" onclick="err()">SKIP ARCHIVE</button>`)}
+function err(){page("SYSTEM ERROR",`<p class="quest">Preparing final report...</p><div class="scan"><span></span><span></span><span></span></div><p class="quest">...</p><button onclick="end1()">CONTINUE</button>`)}
+function end1(){page("SYSTEM ERROR",`<p class="quest">No...</p><p class="quest">That isn't what I wanted to say.</p><button onclick="end2()">CONTINUE</button>`)}
+function end2(){page("TRANSMISSION RECEIVED",`<p class="quest">Over the years...</p><p class="quest">I've watched you become excited over the smallest things.</p><p class="quest big">Music.</p><p class="quest big">Motorcycles.</p><p class="quest big">Creating.</p><p class="quest big">Collecting.</p><p class="quest big">Learning.</p><p class="quest big">Side quests.</p><p class="quest">So I wanted to build you one.</p><button onclick="end3()">CONTINUE</button>`)}
+function end3(){page("TRANSMISSION RECEIVED",`<p class="quest">Every clue...</p><p class="quest">Every code...</p><p class="quest">Every item...</p><p class="quest">was chosen because it reminded me of you.</p><p class="quest">None of these gifts are really the reward.</p><p class="quest">Watching you smile while finding them was.</p><button onclick="finale()">CONTINUE</button>`)}
+function finale(){page("HAPPY BIRTHDAY",`<h2>Happy Birthday, Adam.</h2><div class="heart">♥</div><p class="quest">COMPANION FOUND</p><p class="quest">PLAYER STATUS:</p><h2>FULLY RESTORED</h2><button onclick="ng()">NEW GAME+</button>`)}
+function ng(){playSound("successSound");page("NEW GAME+",`<p class="quest">Coming soon...</p><h2>One more side quest.</h2><p class="quest">Thank you for playing.</p>`)}
+function add(x){if(!inv.includes(x))inv.push(x);upd()}function upd(){$("invCount").textContent=`${inv.length} / 6 ITEMS`;$("invList").innerHTML=inv.length?inv.map(x=>`<li>${x}</li>`).join(""):"<li>No items collected yet.</li>";$("lootCount").textContent=`${loot.length} / 3 LOOT`;$("lootList").innerHTML=loot.length?loot.map(x=>`<li>${x}</li>`).join(""):"<li>No loot found yet.</li>";$("logList").innerHTML=done.map(x=>`<li>${x} - Complete</li>`).join("")+(qi<q.length?`<li>${q[qi][1]} - Awaiting Code</li>`:"")}
+function pop(t,b){$("popTitle").textContent=t;$("popBody").innerHTML=b;$("popup").classList.remove("hidden")}function award(t){playSound("achievementSound");if(ach.includes(t))return;ach.push(t);$("achTitle").textContent=t;$("ach").classList.remove("hidden");setTimeout(()=>$("ach").classList.add("hidden"),2400)}function toast(m){$("toast").textContent=m;$("toast").classList.remove("hidden");setTimeout(()=>$("toast").classList.add("hidden"),1900)}
+$("popClose").onclick=()=>$("popup").classList.add("hidden");$("invBtn").onclick=()=>{playSound("clickSound");$("inv").classList.toggle("hidden");$("log").classList.add("hidden")};$("logBtn").onclick=()=>{$("log").classList.toggle("hidden");$("inv").classList.add("hidden")};$("resetBtn").onclick=()=>{inv=[];loot=[];done=[];qi=0;xp=0;hp=70;ach=[];$("hpLabel").textContent="HP";bars();upd();intro();toast("Save data reset.")};

@@ -1,99 +1,91 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-
-  <title>KamiSama OS Build 3</title>
-
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-
-  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600;700;800&family=Silkscreen:wght@400;700&display=swap" rel="stylesheet" />
-
-  <link rel="stylesheet" href="style.css" />
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1.0">
+    <title>KamiSama OS Build 3.4 RC1</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;600;700;800&family=Silkscreen:wght@400;700&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
 </head>
 
 <body>
-  <div id="app">
-
-    <section id="boot-screen" class="screen active">
-      <div class="boot-box">
-        <div class="logo">KAMISAMA<span>OPERATING SYSTEM</span></div>
-        <div class="build">BUILD_03 // LEVEL_33</div>
-
-        <div class="terminal">
-          <div id="terminal-output">
-            <div class="terminal-line">Initializing...</div>
-          </div>
-
-          <div class="progress">
-            <div id="progress-bar"></div>
-          </div>
+    <div id="app">
+        <section id="boot" class="screen">
+            <div class="logo">KAMISAMA<span>OPERATING SYSTEM</span></div>
+            <div class="build">BUILD_03.4_RC1 // BIRTHDAY PROTOCOL</div>
+            <div class="terminal" id="terminal">
+                <p>Initializing...</p>
+            </div>
+            <div class="progress">
+                <div id="bootbar"></div>
+            </div>
+        </section>
+        <section id="game" class="screen hidden">
+            <header class="hud">
+                <div class="hudtop">
+                    <div><small>PLAYER</small><b>KamiSama</b></div>
+                    <div><small>LV</small><b>33</b></div>
+                </div>
+                <div class="stat"><span id="hpLabel">HP</span>
+                    <div class="mini"><i id="hp"></i></div>
+                </div>
+                <div class="stat"><span>XP</span>
+                    <div class="mini"><i id="xp"></i></div>
+                </div>
+            </header>
+            <main class="panel">
+                <h1 id="title">SIDE QUEST ACCEPTED</h1>
+                <div class="line"></div>
+                <div id="content"></div>
+            </main>
+            <section id="inv" class="drawer hidden">
+                <h2>INVENTORY</h2>
+                <p id="invCount">0 / 6 ITEMS</p>
+                <ul id="invList"></ul>
+                <h2>LOOT FOUND</h2>
+                <p id="lootCount">0 / 3 LOOT</p>
+                <ul id="lootList"></ul>
+            </section>
+            <section id="log" class="drawer hidden">
+                <h2>QUEST LOG</h2>
+                <ul id="logList"></ul>
+            </section>
+            <nav><button id="invBtn">INVENTORY</button><button id="logBtn">QUEST LOG</button><button
+                    id="resetBtn">RESET</button></nav>
+        </section>
+        <div id="popup" class="overlay hidden">
+            <div class="modal">
+                <h2 id="popTitle">ITEM ACQUIRED</h2>
+                <div id="popBody"></div><button id="popClose">CONTINUE</button>
+            </div>
         </div>
-      </div>
-    </section>
-
-    <section id="game-screen" class="screen hidden">
-
-      <header class="hud">
-        <div class="hud-top">
-          <div>
-            <span class="hud-label">PLAYER</span>
-            <strong>KamiSama</strong>
-          </div>
-          <div>
-            <span class="hud-label">LV</span>
-            <strong>33</strong>
-          </div>
+        <div id="ach" class="ach hidden"><small>ACHIEVEMENT UNLOCKED</small><b id="achTitle">One More Side Quest</b>
         </div>
-
-        <div class="stat">
-          <span>HP</span>
-          <div class="mini-bar"><div id="hp-bar"></div></div>
-        </div>
-
-        <div class="stat">
-          <span>XP</span>
-          <div class="mini-bar"><div id="xp-bar"></div></div>
-        </div>
-      </header>
-
-      <main class="panel" id="main-panel">
-        <div class="panel-title" id="screen-title">SIDE QUEST ACCEPTED</div>
-        <div class="divider"></div>
-        <div id="screen-content"></div>
-      </main>
-
-      <section class="drawer hidden" id="inventory-panel">
-        <div class="drawer-title">INVENTORY</div>
-        <div id="inventory-count">0 / 6 ITEMS</div>
-        <ul id="inventory-list"></ul>
-      </section>
-
-      <section class="drawer hidden" id="quest-log-panel">
-        <div class="drawer-title">QUEST LOG</div>
-        <ul id="quest-log-list"></ul>
-      </section>
-
-      <nav class="bottom-menu">
-        <button id="inventory-btn">INVENTORY</button>
-        <button id="quest-log-btn">QUEST LOG</button>
-        <button id="reset-btn">RESET</button>
-      </nav>
-
-    </section>
-
-    <div id="popup" class="popup hidden">
-      <div class="popup-card">
-        <div class="popup-title" id="popup-title">ITEM ACQUIRED</div>
-        <div class="popup-body" id="popup-body"></div>
-        <button id="popup-close">CONTINUE</button>
-      </div>
+        <div id="toast" class="toast hidden"></div>
     </div>
+    <script src="script.js"></script>
+    <audio id="clickSound" src="audio/click.mp3" preload="auto"></audio>
 
-  </div>
+<audio id="successSound" src="audio/success.mp3" preload="auto"></audio>
 
-  <script src="script.js"></script>
+<audio id="errorSound" src="audio/error.mp3" preload="auto"></audio>
+
+<audio id="scannerSound" src="audio/scanner.mp3" preload="auto" loop></audio>
+
+<audio id="itemSound" src="audio/item.mp3" preload="auto"></audio>
+
+<audio id="achievementSound" src="audio/achievement.mp3" preload="auto"></audio>
+
+<audio id="restoreSound" src="audio/restore.mp3" preload="auto"></audio>
+
+<audio id="cameraSound" src="audio/camera.mp3" preload="auto"></audio>
+
+<audio id="bootSound" src="audio/boot.mp3" preload="auto"></audio>
 </body>
+
 </html>
